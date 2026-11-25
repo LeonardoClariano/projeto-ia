@@ -5,9 +5,11 @@ interface Props {
   post: Post;
   menuItem?: MenuItem;
   onRemove?: () => void;
+  liked?: boolean;
+  onToggleLike?: () => void;
 }
 
-export default function PostCard({ post, menuItem, onRemove }: Props) {
+export default function PostCard({ post, menuItem, onRemove, liked, onToggleLike }: Props) {
   return (
     <article className="card">
       <div className="cover" aria-hidden={!post.imageUrl}>
@@ -18,7 +20,18 @@ export default function PostCard({ post, menuItem, onRemove }: Props) {
         <p>{post.description}</p>
         {menuItem && <p className="tag">🍽️ {menuItem.name}</p>}
         <div className="row muted">
-          <span>❤️ {post.likes}</span>
+          {onToggleLike ? (
+            <button
+              type="button"
+              className="btn like"
+              aria-pressed={!!liked}
+              onClick={onToggleLike}
+            >
+              {liked ? '❤️' : '🤍'} {post.likes + (liked ? 1 : 0)}
+            </button>
+          ) : (
+            <span>❤️ {post.likes}</span>
+          )}
           <span>{formatDate(post.createdAt)}</span>
         </div>
         {onRemove && (

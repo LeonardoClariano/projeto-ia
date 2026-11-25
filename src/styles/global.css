@@ -257,3 +257,68 @@ p {
   color: #2e7d32;
   font-weight: 700;
 }
+
+/* Descoberta e feed */
+.swipe-card {
+  position: relative;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+  margin-top: 0.75rem;
+}
+.stamp {
+  position: absolute;
+  top: 1rem;
+  z-index: 1;
+  padding: 0.2rem 0.6rem;
+  border: 3px solid;
+  border-radius: 8px;
+  font-weight: 800;
+  background: #fff;
+}
+.stamp.follow {
+  left: 1rem;
+  color: #2e7d32;
+}
+.stamp.skip {
+  right: 1rem;
+  color: #c62828;
+}
+.chip {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.8rem;
+}
+.swipe-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1rem 0 0.5rem;
+}
+.btn.round {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  padding: 0;
+}
+.center {
+  text-align: center;
+}
+.empty {
+  text-align: center;
+}
+.feed-head {
+  margin-bottom: 0.4rem;
+  flex-wrap: nowrap;
+}
+.link-inline {
+  color: inherit;
+  text-decoration: none;
+}
+.btn.like {
+  padding: 0.2rem 0.6rem;
+  min-height: 32px;
+}

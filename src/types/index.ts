@@ -8,6 +8,8 @@ export interface Cook {
   rating: number;
   reviewsCount: number;
   followers: number;
+  /** Especialidades exibidas na descoberta */
+  tags: string[];
 }
 
 export interface Post {

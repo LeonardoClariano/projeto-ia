@@ -14,6 +14,11 @@ interface CookDataValue {
   addMenuItem: (cookId: string, data: MenuItemInput) => void;
   updateMenuItem: (id: string, data: MenuItemInput) => void;
   removeMenuItem: (id: string) => void;
+  /** IDs dos cozinheiros seguidos pelo cliente (mock) */
+  followedIds: string[];
+  toggleFollow: (cookId: string) => void;
+  likedPostIds: string[];
+  toggleLike: (postId: string) => void;
 }
 
 const CookDataContext = createContext<CookDataValue | null>(null);
@@ -22,6 +27,20 @@ const CookDataContext = createContext<CookDataValue | null>(null);
 export function CookDataProvider({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
+
+  const [followedIds, setFollowedIds] = useState<string[]>(['c1']);
+  const [likedPostIds, setLikedPostIds] = useState<string[]>([]);
+
+  const toggleFollow = useCallback((cookId: string) => {
+    setFollowedIds((prev) =>
+      prev.includes(cookId) ? prev.filter((i) => i !== cookId) : [...prev, cookId],
+    );
+  }, []);
+  const toggleLike = useCallback((postId: string) => {
+    setLikedPostIds((prev) =>
+      prev.includes(postId) ? prev.filter((i) => i !== postId) : [...prev, postId],
+    );
+  }, []);
 
   const addPost = useCallback((cookId: string, data: NewPost) => {
     const post: Post = {
@@ -60,8 +79,24 @@ export function CookDataProvider({ children }: { children: ReactNode }) {
       addMenuItem,
       updateMenuItem,
       removeMenuItem,
+      followedIds,
+      toggleFollow,
+      likedPostIds,
+      toggleLike,
     }),
-    [posts, menuItems, addPost, removePost, addMenuItem, updateMenuItem, removeMenuItem],
+    [
+      posts,
+      menuItems,
+      addPost,
+      removePost,
+      addMenuItem,
+      updateMenuItem,
+      removeMenuItem,
+      followedIds,
+      toggleFollow,
+      likedPostIds,
+      toggleLike,
+    ],
   );
   return <CookDataContext.Provider value={value}>{children}</CookDataContext.Provider>;
 }

@@ -9,7 +9,7 @@ type Tab = 'posts' | 'menu';
 
 export default function CookProfile() {
   const { id } = useParams();
-  const { cooks, posts, menuItems, removePost } = useCookData();
+  const { cooks, posts, menuItems, removePost, followedIds, toggleFollow } = useCookData();
   const [tab, setTab] = useState<Tab>('posts');
   const cook = cooks.find((c) => c.id === id);
 
@@ -23,6 +23,7 @@ export default function CookProfile() {
   }
 
   const isOwner = cook.id === CURRENT_COOK_ID;
+  const following = followedIds.includes(cook.id);
   const cookPosts = posts
     .filter((p) => p.cookId === cook.id)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -43,7 +44,7 @@ export default function CookProfile() {
             <span>publicações</span>
           </div>
           <div>
-            <strong>{cook.followers}</strong>
+            <strong>{cook.followers + (following && !isOwner ? 1 : 0)}</strong>
             <span>seguidores</span>
           </div>
           <div>
@@ -51,6 +52,18 @@ export default function CookProfile() {
             <span>{cook.reviewsCount} avaliações</span>
           </div>
         </div>
+        {!isOwner && (
+          <div className="row">
+            <button
+              type="button"
+              className={`btn ${following ? '' : 'primary'}`}
+              aria-pressed={following}
+              onClick={() => toggleFollow(cook.id)}
+            >
+              {following ? 'Seguindo' : 'Seguir'}
+            </button>
+          </div>
+        )}
         {isOwner && (
           <div className="row">
             <Link className="btn primary" to="/cozinheiro/publicar">
