@@ -112,7 +112,11 @@ export default function CookProfile() {
         <section className="list">
           {cookMenu.length === 0 && <p className="muted">Cardápio vazio.</p>}
           {cookMenu.map((m) => (
-            <MenuItemCard key={m.id} item={m} />
+            <MenuItemCard
+              key={m.id}
+              item={m}
+              orderTo={isOwner ? undefined : `/cozinheiro/${cook.id}/pedido?item=${m.id}`}
+            />
           ))}
         </section>
       )}

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { cooks, initialMenuItems, initialPosts } from '../data/mock';
-import type { Cook, MenuItem, Post } from '../types';
+import type { Cook, MenuItem, Order, OrderLine, PaymentMethod, Post } from '../types';
 
 export type NewPost = Pick<Post, 'title' | 'description' | 'imageUrl' | 'emoji' | 'menuItemId'>;
 export type MenuItemInput = Omit<MenuItem, 'id' | 'cookId'>;
@@ -19,6 +19,15 @@ interface CookDataValue {
   toggleFollow: (cookId: string) => void;
   likedPostIds: string[];
   toggleLike: (postId: string) => void;
+  /** Pedidos simulados (sem cobrança real) */
+  orders: Order[];
+  createOrder: (cookId: string, lines: OrderLine[], note?: string) => string;
+  payOrder: (id: string, method: PaymentMethod) => void;
+  /** Simula a resposta do cozinheiro: aceitar ou recusar */
+  respondOrder: (id: string, accept: boolean, reason?: string) => void;
+  cancelOrder: (id: string, by: 'cliente' | 'cozinheiro', reason?: string) => void;
+  deliverOrder: (id: string) => void;
+  rateOrder: (id: string, stars: number) => void;
 }
 
 const CookDataContext = createContext<CookDataValue | null>(null);
@@ -41,6 +50,50 @@ export function CookDataProvider({ children }: { children: ReactNode }) {
       prev.includes(postId) ? prev.filter((i) => i !== postId) : [...prev, postId],
     );
   }, []);
+
+  const [orders, setOrders] = useState<Order[]>([]);
+  const patchOrder = useCallback((id: string, patch: Partial<Order>) => {
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, ...patch } : o)));
+  }, []);
+  const createOrder = useCallback((cookId: string, lines: OrderLine[], note?: string) => {
+    const id = `o${Date.now()}`;
+    const order: Order = {
+      id,
+      cookId,
+      lines,
+      note,
+      status: 'aguardando_pagamento',
+      createdAt: new Date().toISOString(),
+    };
+    setOrders((prev) => [order, ...prev]);
+    return id;
+  }, []);
+  const payOrder = useCallback(
+    (id: string, method: PaymentMethod) =>
+      patchOrder(id, { status: 'aguardando_cozinheiro', paymentMethod: method }),
+    [patchOrder],
+  );
+  const respondOrder = useCallback(
+    (id: string, accept: boolean, reason?: string) =>
+      patchOrder(
+        id,
+        accept ? { status: 'aceito' } : { status: 'recusado', canceledBy: 'cozinheiro', reason },
+      ),
+    [patchOrder],
+  );
+  const cancelOrder = useCallback(
+    (id: string, by: 'cliente' | 'cozinheiro', reason?: string) =>
+      patchOrder(id, { status: 'cancelado', canceledBy: by, reason }),
+    [patchOrder],
+  );
+  const deliverOrder = useCallback(
+    (id: string) => patchOrder(id, { status: 'entregue' }),
+    [patchOrder],
+  );
+  const rateOrder = useCallback(
+    (id: string, stars: number) => patchOrder(id, { stars }),
+    [patchOrder],
+  );
 
   const addPost = useCallback((cookId: string, data: NewPost) => {
     const post: Post = {
@@ -83,6 +136,13 @@ export function CookDataProvider({ children }: { children: ReactNode }) {
       toggleFollow,
       likedPostIds,
       toggleLike,
+      orders,
+      createOrder,
+      payOrder,
+      respondOrder,
+      cancelOrder,
+      deliverOrder,
+      rateOrder,
     }),
     [
       posts,
@@ -96,6 +156,13 @@ export function CookDataProvider({ children }: { children: ReactNode }) {
       toggleFollow,
       likedPostIds,
       toggleLike,
+      orders,
+      createOrder,
+      payOrder,
+      respondOrder,
+      cancelOrder,
+      deliverOrder,
+      rateOrder,
     ],
   );
   return <CookDataContext.Provider value={value}>{children}</CookDataContext.Provider>;

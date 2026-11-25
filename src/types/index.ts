@@ -37,3 +37,36 @@ export interface MenuItem {
   fat: number;
   emoji: string;
 }
+
+export type OrderStatus =
+  | 'aguardando_pagamento'
+  | 'aguardando_cozinheiro'
+  | 'aceito'
+  | 'entregue'
+  | 'recusado'
+  | 'cancelado';
+
+export type PaymentMethod = 'pix' | 'cartao';
+
+export interface OrderLine {
+  menuItemId: string;
+  name: string;
+  emoji: string;
+  unitPriceCents: number;
+  qty: number;
+}
+
+export interface Order {
+  id: string;
+  cookId: string;
+  lines: OrderLine[];
+  note?: string;
+  status: OrderStatus;
+  paymentMethod?: PaymentMethod;
+  /** Quem cancelou/recusou */
+  canceledBy?: 'cliente' | 'cozinheiro';
+  reason?: string;
+  /** Avaliação (1 a 5 estrelas) feita após a entrega */
+  stars?: number;
+  createdAt: string;
+}

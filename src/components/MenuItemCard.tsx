@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { MenuItem } from '../types';
 import { formatPrice } from '../utils/format';
 
@@ -5,9 +6,11 @@ interface Props {
   item: MenuItem;
   onEdit?: () => void;
   onRemove?: () => void;
+  /** Link para iniciar um pedido simulado deste item */
+  orderTo?: string;
 }
 
-export default function MenuItemCard({ item, onEdit, onRemove }: Props) {
+export default function MenuItemCard({ item, onEdit, onRemove, orderTo }: Props) {
   return (
     <article className="card menu-item">
       <div className="emoji" aria-hidden="true">
@@ -20,6 +23,13 @@ export default function MenuItemCard({ item, onEdit, onRemove }: Props) {
           {item.calories} kcal · P {item.protein}g · C {item.carbs}g · G {item.fat}g
         </p>
         <strong>{formatPrice(item.priceCents)}</strong>
+        {orderTo && (
+          <div className="row">
+            <Link className="btn primary" to={orderTo}>
+              Pedir
+            </Link>
+          </div>
+        )}
         {(onEdit || onRemove) && (
           <div className="row">
             {onEdit && (

@@ -8,6 +8,7 @@ export default function NavBar() {
         Descobrir
       </NavLink>
       <NavLink to="/feed">Feed</NavLink>
+      <NavLink to="/pedidos">Pedidos</NavLink>
       <NavLink to={`/cozinheiro/${CURRENT_COOK_ID}`}>Meu perfil</NavLink>
       <NavLink to="/cozinheiro/publicar">Publicar</NavLink>
       <NavLink to="/cozinheiro/cardapio">Cardápio</NavLink>
